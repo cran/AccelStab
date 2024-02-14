@@ -35,7 +35,7 @@
 #' data(antigenicity)
 #'
 #' #run step1.down fit
-#' \donttest{fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time",
+#' fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time",
 #'  C = "Celsius", max_time_pred = 3)
 #'
 #' #run excursion function with fixed intercept.
@@ -48,7 +48,7 @@
 #'                        xname = "Time in years", yname = "Concentration",
 #'                        ribbon = TRUE, plot_simulations = TRUE)
 #'
-#' plot <- excursion$excursion_plot}
+#' excursion$excursion_plot
 #'
 #' @import ggplot2
 #' @import dplyr
@@ -91,7 +91,6 @@ excursion <- function(step1_down_object, temp_changes, time_changes, CI = TRUE,
       total_time = seq(ifelse(i==1,0,time_changes[i-1]),time_changes[i],length.out = 101)))
   }
 
-  message("Sample draw starting...")
   # Now it splits for each one of the four options
   if(step1_down_object$user_parameters$reparameterisation == T &&
      step1_down_object$user_parameters$zero_order == T){
@@ -140,8 +139,8 @@ excursion <- function(step1_down_object, temp_changes, time_changes, CI = TRUE,
 
           }
           if (i == length(time_changes)){
-            if (((boot_count*100)/draw) %in% c(25,50,75,100)){
-              message(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
+            if (boot_count %% 1000 == 0){
+              print(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
             }
             boot_count <<- boot_count+1
           }
@@ -212,8 +211,8 @@ excursion <- function(step1_down_object, temp_changes, time_changes, CI = TRUE,
 
           }
           if (i == length(time_changes)){
-            if (((boot_count*100)/draw) %in% c(25,50,75,100)){
-              message(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
+            if (boot_count %% 1000 == 0){
+              print(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
             }
             boot_count <<- boot_count+1
           }
@@ -285,8 +284,8 @@ excursion <- function(step1_down_object, temp_changes, time_changes, CI = TRUE,
 
           }
           if (i == length(time_changes)){
-            if (((boot_count*100)/draw) %in% c(25,50,75,100)){
-              message(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
+            if (boot_count %% 1000 == 0){
+              print(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
             }
             boot_count <<- boot_count+1
           }
@@ -359,8 +358,8 @@ excursion <- function(step1_down_object, temp_changes, time_changes, CI = TRUE,
 
         }
         if (i == length(time_changes)){
-          if (((boot_count*100)/draw) %in% c(25,50,75,100)){
-            message(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
+          if (boot_count %% 1000 == 0){
+            print(paste0("Sample draw progress: ",(boot_count*100)/draw,"%"))
           }
           boot_count <<- boot_count+1
         }

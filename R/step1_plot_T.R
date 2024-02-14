@@ -21,7 +21,7 @@
 #' data(potency)
 #'
 #' #run step1_down fit
-#' \donttest{fit1 <- step1_down(data = potency, y = "Potency", .time = "Time",
+#' fit1 <- step1_down(data = potency, y = "Potency", .time = "Time",
 #'  C = "Celsius", zero_order = TRUE)
 #'
 #' #plot raw data with prediction curves with focus on temperature in dataset.
@@ -30,9 +30,10 @@
 #'
 #' #plot raw data with prediction curves with focus on temperature not in dataset.
 #' step1_plot_T(fit1, focus_T = -10,ribbon = TRUE, xlim = NULL, ylim = c(0,12),
-#'  xname = "Time (Months)", yname = "Potency")}
+#'  xname = "Time (Months)", yname = "Potency")
 #'
 #' @import ggplot2
+#' @import scales
 #'
 #' @export step1_plot_T
 
@@ -55,6 +56,7 @@ step1_plot_T <- function (step1_down_object, focus_T = NULL, xname = NULL, yname
       .time = step1_down_object$user_parameters$.time,
       K = step1_down_object$user_parameters$K,
       C = step1_down_object$user_parameters$C,
+      validation = step1_down_object$user_parameters$validation,
       draw = step1_down_object$user_parameters$draw,
       parms = step1_down_object$user_parameters$parms,
       temp_pred_C = c(step1_down_object$user_parameters$temp_pred_C,focus_T),
@@ -80,6 +82,12 @@ step1_plot_T <- function (step1_down_object, focus_T = NULL, xname = NULL, yname
                             legend.text = element_text(size = 13),
                             legend.title = element_text(size = 13))
 
+  validation = step1_down_object$user_parameters$validation
+  if(!is.null(validation)){
+    shape_types <- c(16,1)
+    names(shape_types) <- c("Fit", "Validation")
+  }
+
   xx = pred$Celsius == focus_T
 
   confidence_i <- paste0(confidence_interval * 100," % CI")
@@ -87,6 +95,9 @@ step1_plot_T <- function (step1_down_object, focus_T = NULL, xname = NULL, yname
 
   lines_t <- c("solid","dotted","longdash")
   names(lines_t) <- c("Prediction",confidence_i,prediction_i)
+
+  colour_t <- scales::hue_pal()(length(unique(pred$Celsius)))
+  names(colour_t) <- as.character(unique(pred$Celsius))
 
   plot = ggplot() +
    labs( x = xname, y = yname) +
@@ -100,8 +111,11 @@ step1_plot_T <- function (step1_down_object, focus_T = NULL, xname = NULL, yname
   {if(ribbon)geom_ribbon(data=pred[xx,], aes(x = time, ymin=CI1, ymax=CI2, fill= Celsius), alpha=0.13, show.legend = FALSE)} +
    geom_line(data=pred[xx,], mapping=aes(x= time, y = PI1, colour = Celsius, linetype = prediction_i)) +
    geom_line(data=pred[xx,], mapping=aes(x= time, y = PI2, colour = Celsius, linetype = prediction_i)) +
-   geom_point(data=dat, mapping=aes(x= time, y = y, colour = Celsius)) +
-   scale_linetype_manual(name = NULL, values=lines_t) +
+   geom_point(data=dat, mapping=aes(x= time, y = y, colour = Celsius, shape = validation)) +
+   scale_linetype_manual(name = NULL, values = lines_t) +
+   scale_colour_manual(name = "Celsius", values = colour_t) +
+   scale_fill_manual(name = NULL, values = colour_t) +
+   {if(!is.null(validation))scale_shape_manual(values = shape_types, name = NULL)} +
    theme(legend.box = "vertical", legend.spacing = unit(-0.4,"line"))
 
   return(plot)

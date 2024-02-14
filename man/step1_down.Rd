@@ -10,6 +10,7 @@ step1_down(
   .time,
   K = NULL,
   C = NULL,
+  validation = NULL,
   draw = 10000,
   parms = NULL,
   temp_pred_C = NULL,
@@ -31,6 +32,8 @@ step1_down(
 \item{K}{Kelvin variable (numeric or column name) (optional).}
 
 \item{C}{Celsius variable (numeric or column name) (optional).}
+
+\item{validation}{Validation dummy variable (column name) (optional).}
 
 \item{draw}{Number of simulations used to estimate confidence intervals.}
 
@@ -67,23 +70,15 @@ Fit the one-step Šesták–Berggren kinetic model.
 }
 \details{
 Fit the one-step Šesták–Berggren kinetic (non-linear) model using
-accelerated stability data.The minimum requirements for the function include
-the accelerated stability data, name of decreasing variable and time variable
-within the data plus the temperature column. The temperature column can be one
-of Kelvin or Celsius. If both K and C arguments are stated then C is dropped
-and K is prioritised.
-
-The optional arguments are detailed below. Note that if a row is missing a
-value for one of the decreasing variable, selected temperature, or time - it
-will be dropped.
+accelerated stability data.
 }
 \examples{
 #load antigenicity and potency data.
-#data(antigenicity)
-#data(potency)
+data(antigenicity)
+data(potency)
 
 #Basic use of the step1.down function with C column defined.
-\donttest{fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius")
+fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius")
 
 #Basic use of the step1.down function with K column defined.
 fit2 <- step1_down(data = antigenicity, y = "conc", .time = "time", K = "K")
@@ -95,10 +90,5 @@ fit3 <- step1_down(data = potency, y = "Potency", .time = "Time",C = "Celsius",
 #reparameterisation is TRUE.
 fit4 <- step1_down(data = antigenicity, y = "conc", .time = "time",C = "Celsius",
   reparameterisation = TRUE)
-
-#If starting values for k1, k2, k3, and c0 are known then the 'parms' argument can be used.
-parms <- list(k1=65, k2=20000, k3=5, c0=100)
-fit5 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
- parms = parms)}
 
 }

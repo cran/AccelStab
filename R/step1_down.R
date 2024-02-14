@@ -3,15 +3,7 @@
 #' @description Fit the one-step Šesták–Berggren kinetic model.
 #'
 #' @details Fit the one-step Šesták–Berggren kinetic (non-linear) model using
-#'  accelerated stability data.The minimum requirements for the function include
-#'  the accelerated stability data, name of decreasing variable and time variable
-#'  within the data plus the temperature column. The temperature column can be one
-#'  of Kelvin or Celsius. If both K and C arguments are stated then C is dropped
-#'  and K is prioritised.
-#'
-#'  The optional arguments are detailed below. Note that if a row is missing a
-#'  value for one of the decreasing variable, selected temperature, or time - it
-#'  will be dropped.
+#'  accelerated stability data.
 #'
 #' @param data Dataframe containing accelerated stability data (required).
 #' @param y Name of decreasing variable (e.g. concentration) contained within data
@@ -19,6 +11,7 @@
 #' @param .time Time variable contained within data (required).
 #' @param K Kelvin variable (numeric or column name) (optional).
 #' @param C Celsius variable (numeric or column name) (optional).
+#' @param validation Validation dummy variable (column name) (optional).
 #' @param draw Number of simulations used to estimate confidence intervals.
 #' @param parms Starting values for the parameters as a list - k1, k2, k3, and c0.
 #' @param temp_pred_C Integer or numeric value to predict the response for a
@@ -43,11 +36,11 @@
 #'    }
 #'
 #' @examples #load antigenicity and potency data.
-#' #data(antigenicity)
-#' #data(potency)
+#' data(antigenicity)
+#' data(potency)
 #'
 #' #Basic use of the step1.down function with C column defined.
-#' \donttest{fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius")
+#' fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius")
 #'
 #' #Basic use of the step1.down function with K column defined.
 #' fit2 <- step1_down(data = antigenicity, y = "conc", .time = "time", K = "K")
@@ -60,18 +53,13 @@
 #' fit4 <- step1_down(data = antigenicity, y = "conc", .time = "time",C = "Celsius",
 #'   reparameterisation = TRUE)
 #'
-#' #If starting values for k1, k2, k3, and c0 are known then the 'parms' argument can be used.
-#' parms <- list(k1=65, k2=20000, k3=5, c0=100)
-#' fit5 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
-#'  parms = parms)}
-#'
 #' @importFrom stats vcov coef runif confint rnorm quantile qt complete.cases
 #' @importFrom minpack.lm nls.lm
 #' @importFrom mvtnorm rmvt
 #'
 #' @export step1_down
 
-step1_down <- function (data, y, .time, K = NULL, C = NULL,
+step1_down <- function (data, y, .time, K = NULL, C = NULL, validation = NULL,
                         draw = 10000, parms = NULL, temp_pred_C = NULL,
                         max_time_pred = NULL, confidence_interval = 0.95, by = 101,
                         reparameterisation = FALSE, zero_order = FALSE){
@@ -81,29 +69,79 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
   if (!is.null(parms) & !is.list(parms))
     stop("The starting values for parameters must be a list, or keep as NULL")
 
-  user_parameters <- list(data = data, y = y, .time = .time,
-                          K = K, C = C, draw = draw, parms = parms, temp_pred_C = temp_pred_C,
-                          max_time_pred = max_time_pred, confidence_interval = confidence_interval,
-                          by = by, reparameterisation = reparameterisation, zero_order = zero_order)
+  user_parameters <- list(
+    data = data, y = y, .time = .time, K = K, C = C, validation = validation,draw = draw,
+    parms = parms, temp_pred_C = temp_pred_C, max_time_pred = max_time_pred,
+    confidence_interval = confidence_interval, by = by,
+    reparameterisation = reparameterisation, zero_order = zero_order
+  )
 
-  if(is.null(K) & !is.null(C))  {
-    dat <- data.frame(data[c(y,.time,C)])
-    colnames(dat) <- c("y","time","K")
-    dat$Celsius <- as.factor(dat$K)
-    dat$K <- dat$K + 273.15 }
-  else{
-    dat <- data.frame(data[c(y,.time,K)])
-    colnames(dat) <- c("y","time","K")
-    dat$Celsius <- as.factor(dat$K - 273.15)  }
+  if(!is.null(C) & !is.null(K)) {
 
-  dat <- dat[complete.cases(dat), ]
+    data[, C] <- ifelse(is.na(data[, C]) & !is.na(data[, K]),
+                        data$K - 273.15,
+                        data[, C])
+
+    data[, K] <- ifelse(is.na(data[, K]) & !is.na(data[, C]),
+                        data$C + 273.15,
+                        data[, K])
+  }
+
+  data <- data[complete.cases(data[, c(C,K,y,.time)]), ]
+
+  dat = data
+
+  if (!is.null(validation))
+    if (!all(dat[,validation] %in% c(0,1)))
+      stop("Validation column must contain 1s and 0s only")
+
+  if (is.null(K))
+    dat$K = dat[, C] + 273.15
+  if (is.null(C)) {
+    dat$C = dat[, K] - 273.15
+    C = "C"}
+
   Kref = mean(dat$K)
+  dat$Celsius = as.factor(dat[, C])
+  dat$time = dat[, .time]
+  dat$y = dat[, y]
+  if(!is.null(validation)){
+    dat$validation = ifelse(dat[,validation] == 0, "Fit", "Validation")
+    if(validation != "validation"){
+      dat <- dat[, !names(dat) %in% c(validation)]
+    }
+  }
+  if(.time != "time"){
+    dat <- dat[, !names(dat) %in% c(.time)]
+  }
+  if(y != "y"){
+    dat <- dat[, !names(dat) %in% c(y)]
+  }
+
   Temps = sort(unique(dat$K))
   if (!is.null(temp_pred_C))
-    Temps = sort(c(Temps, temp_pred_C + 273.15))
+    Temps = unique(sort(c(Temps, temp_pred_C + 273.15)))
   if (is.null(max_time_pred))
     max_time_pred = max(dat$time, na.rm = TRUE)
   times.pred = seq(0, max_time_pred, length.out = by)
+
+  dat_full <- dat
+  if(!is.null(validation)){
+    dat <- dat[dat$validation == "Fit",]
+  }
+
+  if(is.null(parms)){
+    sorted_data <- dat[order(dat$time), ]
+
+    min_time <- min(sorted_data$time)
+
+    if (sum(sorted_data$time == min_time) > 3) {
+      selected_rows <- sorted_data$time == min_time
+    } else {
+      selected_rows <- seq_len(min(3, nrow(sorted_data)))
+    }
+    c0_initial <- mean(sorted_data$y[selected_rows])
+  }
 
   if(reparameterisation & zero_order){ # reparameterisation and k3 is 0
     MyFctNL = function(parms) { # Make function
@@ -124,7 +162,7 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     else {
       repeat {
         parms = list(k1 = stats::runif(1, 0, 40), k2 = stats::runif(1,
-                                                                    1000, 20000), c0 = mean(dat$y[dat$time == 0]))
+                                                                    1000, 20000), c0 = c0_initial)
         fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
                                                   fn = MyFctNL, lower = rep(0, length(parms))))
         res = tryCatch({
@@ -201,7 +239,7 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     else {
       repeat {
         parms = list(k1 = stats::runif(1, 0, 40), k2 = stats::runif(1,
-                                                                    1000, 20000), c0 = mean(dat$y[dat$time == 0]))
+                                                                    1000, 20000), c0 = c0_initial)
         fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
                                                   fn = MyFctNL, lower = rep(0, length(parms))))
         res = tryCatch({
@@ -277,7 +315,7 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     else {
       repeat {
         parms = list(k1 = stats::runif(1, 0, 60), k2 = stats::runif(1,
-                                                                    1000, 20000), k3 = stats::runif(1, 0, 11), c0 = mean(dat$y[dat$time == 0]))
+                                                                    1000, 20000), k3 = stats::runif(1, 0, 11), c0 = c0_initial)
         fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
                                                   fn = MyFctNL, lower = rep(0, length(parms))))
         res = tryCatch({
@@ -298,14 +336,8 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     k1 = coef(fit)[1]
     k2 = coef(fit)[2]
     k3 = coef(fit)[3]
-
-    if (k3 == 0)  {
-      message("k3 is fitted to be exactly 0, we strongly suggest using option zero_order = TRUE")
-    }
-    else if(confint(fit,'k3')[1] < 0 && confint(fit,'k3')[2] > 0)
-    {message(paste0("The 95% Wald Confidence Interval for k3 includes 0, k3 is estimated as "
-                    ,signif(k3,4),". We suggest considering option zero_order = TRUE"))}
-
+    if (k3 == 0){print("k3 is fitted to be exactly 0, we strongly suggest using option zero_order = TRUE")
+    }else if(confint(fit,'k3')[1] < 0 && confint(fit,'k3')[2] > 0){print(paste0("The 95% Wald Confidence Interval for k3 includes 0, k3 is estimated as ",signif(k3,4),". We suggest considering option zero_order = TRUE"))}
     c0 = coef(fit)[4]
     SIG = vcov(fit)
     sigma = summary(fit)$sigma
@@ -365,7 +397,7 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     else {
       repeat {
         parms = list(k1 = stats::runif(1, 0, 60), k2 = stats::runif(1,
-                                                                    1000, 20000), k3 = stats::runif(1, 0, 11), c0 = mean(dat$y[dat$time == 0]))
+                                                                    1000, 20000), k3 = stats::runif(1, 0, 11), c0 = c0_initial)
         fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
                                                   fn = MyFctNL, lower = rep(0, length(parms))))
         res = tryCatch({
@@ -385,14 +417,8 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     k1 = coef(fit)[1]
     k2 = coef(fit)[2]
     k3 = coef(fit)[3]
-
-    if (k3 == 0)  {
-      message("k3 is fitted to be exactly 0, we strongly suggest using option zero_order = TRUE")
-    }
-    else if(confint(fit,'k3')[1] < 0 && confint(fit,'k3')[2] > 0)
-    {message(paste0("The 95% Wald Confidence Interval for k3 includes 0, k3 is estimated as "
-                    ,signif(k3,4),". We suggest considering option zero_order = TRUE"))}
-
+    if (k3 == 0){print("k3 is fitted to be exactly 0, we strongly suggest using option zero_order = TRUE")
+    }else if(confint(fit,'k3')[1] < 0 && confint(fit,'k3')[2] > 0){print(paste0("The 95% Wald Confidence Interval for k3 includes 0, k3 is estimated as ",signif(k3,4),". We suggest considering option zero_order = TRUE"))}
     c0 = coef(fit)[4]
     SIG = vcov(fit)
     sigma = summary(fit)$sigma
@@ -449,7 +475,7 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL,
     pred$PI1 = PI1b
     pred$PI2 = PI2b}
 
-  results = list(fit, dat, pred,user_parameters)
+  results = list(fit, dat_full, pred,user_parameters)
   names(results) = c("fit", "data", "prediction","user_parameters")
   class(results) = "SB"
   return(results)
