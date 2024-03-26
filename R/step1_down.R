@@ -40,18 +40,18 @@
 #' data(potency)
 #'
 #' #Basic use of the step1.down function with C column defined.
-#' fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius")
+#' fit1 <- step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", draw = 5000)
 #'
 #' #Basic use of the step1.down function with K column defined.
-#' fit2 <- step1_down(data = antigenicity, y = "conc", .time = "time", K = "K")
+#' fit2 <- step1_down(data = antigenicity, y = "conc", .time = "time", K = "K", draw = 5000)
 #'
 #' #When zero_order = FALSE, the output suggests using zero_order = TRUE for Potency dataset.
 #' fit3 <- step1_down(data = potency, y = "Potency", .time = "Time",C = "Celsius",
-#'   reparameterisation = FALSE, zero_order = TRUE)
+#'   reparameterisation = FALSE, zero_order = TRUE, draw = 5000)
 #'
 #' #reparameterisation is TRUE.
 #' fit4 <- step1_down(data = antigenicity, y = "conc", .time = "time",C = "Celsius",
-#'   reparameterisation = TRUE)
+#'   reparameterisation = TRUE, draw = 5000)
 #'
 #' @importFrom stats vcov coef runif confint rnorm quantile qt complete.cases
 #' @importFrom minpack.lm nls.lm
@@ -161,19 +161,27 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL, validation = NULL,
     }
     else {
       repeat {
+        suppressWarnings(rm(fit))
+
         parms = list(k1 = stats::runif(1, 0, 40), k2 = stats::runif(1,
                                                                     1000, 20000), c0 = c0_initial)
         fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
                                                   fn = MyFctNL, lower = rep(0, length(parms))))
-        res = tryCatch({
-          summary(fit)
-        }, error = function(e) e, warning = function(w) w)
-        res2 = tryCatch({
+        fit <- tryCatch({
+          suppressWarnings(minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0, length(parms))))
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        vcov_test <- tryCatch({
           stats::vcov(fit)
-        }, error = function(e) e)
-        if (any(stats::coef(fit) != parms) & !inherits(res, "error") &
-            !inherits(res2, "error"))
-          (break)()
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        if(all(!(fit %in% c("error","warning"))) && all(!(vcov_test %in% c("error","warning", NaN)))){
+          break
+        }
       }
       fit = minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0,
                                                                       length(parms)))
@@ -238,19 +246,25 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL, validation = NULL,
     }
     else {
       repeat {
+        suppressWarnings(rm(fit))
+
         parms = list(k1 = stats::runif(1, 0, 40), k2 = stats::runif(1,
                                                                     1000, 20000), c0 = c0_initial)
-        fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
-                                                  fn = MyFctNL, lower = rep(0, length(parms))))
-        res = tryCatch({
-          summary(fit)
-        }, error = function(e) e, warning = function(w) w)
-        res2 = tryCatch({
+        fit <- tryCatch({
+          suppressWarnings(minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0, length(parms))))
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        vcov_test <- tryCatch({
           stats::vcov(fit)
-        }, error = function(e) e)
-        if (any(stats::coef(fit) != parms) & !inherits(res, "error") &
-            !inherits(res2, "error"))
-          (break)()
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        if(all(!(fit %in% c("error","warning"))) && all(!(vcov_test %in% c("error","warning", NaN)))){
+          break
+        }
       }
       fit = minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0,
                                                                       length(parms)))
@@ -314,19 +328,25 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL, validation = NULL,
     }
     else {
       repeat {
+        suppressWarnings(rm(fit))
+
         parms = list(k1 = stats::runif(1, 0, 60), k2 = stats::runif(1,
                                                                     1000, 20000), k3 = stats::runif(1, 0, 11), c0 = c0_initial)
-        fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
-                                                  fn = MyFctNL, lower = rep(0, length(parms))))
-        res = tryCatch({
-          summary(fit)
-        }, error = function(e) e, warning = function(w) w)
-        res2 = tryCatch({
+        fit <- tryCatch({
+          suppressWarnings(minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0, length(parms))))
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        vcov_test <- tryCatch({
           stats::vcov(fit)
-        }, error = function(e) e)
-        if (any(stats::coef(fit) != parms) & !inherits(res, "error") &
-            !inherits(res2, "error"))
-          (break)()
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        if(all(!(fit %in% c("error","warning"))) && all(!(vcov_test %in% c("error","warning", NaN)))){
+          break
+        }
       }
       fit = minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0,
                                                                       length(parms)))
@@ -396,19 +416,25 @@ step1_down <- function (data, y, .time, K = NULL, C = NULL, validation = NULL,
     }
     else {
       repeat {
+        suppressWarnings(rm(fit))
+
         parms = list(k1 = stats::runif(1, 0, 60), k2 = stats::runif(1,
                                                                     1000, 20000), k3 = stats::runif(1, 0, 11), c0 = c0_initial)
-        fit = suppressWarnings(minpack.lm::nls.lm(par = parms,
-                                                  fn = MyFctNL, lower = rep(0, length(parms))))
-        res = tryCatch({
-          summary(fit)
-        }, error = function(e) e, warning = function(w) w)
-        res2 = tryCatch({
+        fit <- tryCatch({
+          suppressWarnings(minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0, length(parms))))
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        vcov_test <- tryCatch({
           stats::vcov(fit)
-        }, error = function(e) e)
-        if (any(stats::coef(fit) != parms) & !inherits(res, "error") &
-            !inherits(res2, "error"))
-          (break)()
+        },
+        error = function(e){"error"},
+        warning = function(w){"warning"})
+
+        if(all(!(fit %in% c("error","warning"))) && all(!(vcov_test %in% c("error","warning", NaN)))){
+          break
+        }
       }
       fit = minpack.lm::nls.lm(par = parms, fn = MyFctNL, lower = rep(0,
                                                                       length(parms)))
