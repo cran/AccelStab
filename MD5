@@ -1,10 +1,10 @@
-95a680b55c67841d2c26f054d2d60a9c *DESCRIPTION
+800b5e1f43be1201478e38390878b94f *DESCRIPTION
 99c759557b13fc77a5def6248157b096 *NAMESPACE
-e98fcf8bae13ec5bf66694d1e5b7e8b8 *NEWS.md
+c9336b21dfbc38fd9fa9b5e91fcb56cf *NEWS.md
 4f67eacc4d865f741e568fce8664a506 *R/antigenicity.R
 f5963961981c5e59d7da508498d6fff5 *R/excursion.R
 21ab5c44b8cc928ae009e7e490850d1e *R/potency.R
-c94b64f2a2217cbf1c1c3decf4272265 *R/step1_down.R
+2142dd531f186495cfef8c9eda8b4bfd *R/step1_down.R
 78ae06cb2601d934017af7858a4ad11f *R/step1_down_rmse.R
 b2ed62dd527c0bfc497c545f96265417 *R/step1_plot_CI.R
 527ef30070d5a7fc425ce3425a4b8275 *R/step1_plot_PI.R
@@ -12,10 +12,10 @@ d8ef4bd8a0ff7601c6cb9b9e2754155d *R/step1_plot_T.R
 e9e7ec58df5c5975f5b2edceea7a8fc6 *R/step1_plot_desc.R
 e4f74adda9d9805a64bf7d6390cbb513 *R/step1_plot_diagnostic.R
 2aadcf3f4570bdd74437cbdba65d586d *R/step1_plot_pred.R
-c81f7830bf0623480e39885413b6b48b *R/step1_sample_mvt.R
+8b7bf38b2ee681698db9ea91e122fce2 *R/step1_sample_mvt.R
 eb18e65315f787e824b70b7d7c84bf9c *README.md
 6e834200ced8b3c70c28f60235a39053 *data/antigenicity.rda
-fbcf5c02d8ec74e2941124b0230d3e30 *data/potency.rda
+b3fc51e4cf38aae21c8f579b4af6b1a8 *data/potency.rda
 0c361ce6286daaef726eea89e774db4e *man/antigenicity.Rd
 8d3add945ba96c554baba2491f2bebeb *man/excursion.Rd
 ec4ea48297bcd723c823e053e4b6895d *man/figures/AccelStab.png
@@ -28,7 +28,7 @@ c3978703d8f40f2679795335715e98f4 *man/figures/lifecycle-experimental.svg
 53b3f893324260b737b3c46ed2a0e643 *man/figures/lifecycle-stable.svg
 1c1fe7a759b86dc6dbcbe7797ab8246c *man/figures/lifecycle-superseded.svg
 2011b220868f41f619823a5cceb82074 *man/potency.Rd
-fb7b8cc679ef2d0b2c4f8159c2f1102d *man/step1_down.Rd
+bf96edcf20b1f2ba18347c964e180f3a *man/step1_down.Rd
 faf87e111811f57adf09cc2bab500c28 *man/step1_down_rmse.Rd
 bb9aadcb15b45a8722d0923bd358c50f *man/step1_plot_CI.Rd
 00b46549b0b25034f07c3b87cfc893ca *man/step1_plot_PI.Rd
