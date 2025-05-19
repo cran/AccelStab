@@ -1,12 +1,12 @@
 Package: AccelStab
 Title: Accelerated Stability Kinetic Modelling
-Version: 2.1.1
+Version: 2.2.0
 Authors@R: 
-      c(person("Bernard G", "Franq", email = "accelstab@gmail.com", role = c("aut","cph")),
-      person("Ben", "Wells", email = "wellsbenjy@gmail.com", role = c("cre")),
-      person("Alex", "Ball", email = "alex_keith_ball@hotmail.com", role = "ctb"),
+    c(person("Bernard G", "Franq", email = "accelstab@gmail.com", role = c("aut", "cph")),
+      person("Ben", "Wells", email = "wellsbenjy@gmail.com", role = "ctb"),
+      person("Alex", "Ball", email = "alex_keith_ball@hotmail.com", role = c("cre")),
       person("Daniel", "Williams", email = "daniel@bayezian.com", role = "ctb"))
-Description: Estimate the Šesták–Berggren kinetic model (degradation model) from experimental data. A
+Description: Estimate the Šesták–Berggren kinetic model (degradation model) from experimental data.
   A closed-form (analytic) solution to the degradation model is implemented as a non-linear fit,
   allowing for the extrapolation of the degradation of a drug product - both in time and 
   temperature. Parametric bootstrap, with kinetic parameters drawn from the multivariate
@@ -17,9 +17,10 @@ Description: Estimate the Šesták–Berggren kinetic model (degradation model) 
   vaccines development.
 License: AGPL (>= 3)
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Imports: dplyr, ggplot2, minpack.lm, mvtnorm, stats, scales
 Suggests: testthat (>= 3.0.0), knitr, rmarkdown, lifecycle
+VignetteBuilder: knitr
 Depends: R (>= 4.1.0)
 Config/testthat/edition: 3
 LazyData: true
@@ -27,11 +28,11 @@ Language: en-GB
 URL: https://github.com/AccelStab/AccelStab
 BugReports: https://github.com/AccelStab/AccelStab/issues
 NeedsCompilation: no
-Packaged: 2025-01-20 13:15:38 UTC; benwe
+Packaged: 2025-05-19 10:35:00 UTC; Alex Bal
 Author: Bernard G Franq [aut, cph],
-  Ben Wells [cre],
-  Alex Ball [ctb],
+  Ben Wells [ctb],
+  Alex Ball [cre],
   Daniel Williams [ctb]
-Maintainer: Ben Wells <wellsbenjy@gmail.com>
+Maintainer: Alex Ball <alex_keith_ball@hotmail.com>
 Repository: CRAN
-Date/Publication: 2025-01-20 15:20:01 UTC
+Date/Publication: 2025-05-19 13:10:07 UTC
