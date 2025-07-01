@@ -1,6 +1,6 @@
 Package: AccelStab
 Title: Accelerated Stability Kinetic Modelling
-Version: 2.2.1
+Version: 2.3.1
 Authors@R: 
     c(person("Bernard G", "Franq", email = "accelstab@gmail.com", role = c("aut", "cph")),
       person("Ben", "Wells", email = "wellsbenjy@gmail.com", role = "ctb"),
@@ -18,7 +18,7 @@ Description: Estimate the Šesták–Berggren kinetic model (degradation model) 
 License: AGPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Imports: dplyr, ggplot2, minpack.lm, mvtnorm, stats, scales
+Imports: dplyr, ggplot2, minpack.lm, stats, scales
 Suggests: testthat (>= 3.0.0), knitr, rmarkdown, lifecycle
 VignetteBuilder: knitr
 Depends: R (>= 4.1.0)
@@ -28,11 +28,11 @@ Language: en-GB
 URL: https://github.com/AccelStab/AccelStab
 BugReports: https://github.com/AccelStab/AccelStab/issues
 NeedsCompilation: no
-Packaged: 2025-05-23 13:12:03 UTC; Alex Bal
+Packaged: 2025-06-30 15:52:34 UTC; Alex Bal
 Author: Bernard G Franq [aut, cph],
   Ben Wells [ctb],
   Alex Ball [cre],
   Daniel Williams [ctb]
 Maintainer: Alex Ball <alex_keith_ball@hotmail.com>
 Repository: CRAN
-Date/Publication: 2025-05-27 09:30:02 UTC
+Date/Publication: 2025-07-01 09:20:02 UTC
