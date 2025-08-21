@@ -21,18 +21,22 @@ table(antigenicity$Celsius)
 unique(antigenicity$time)
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
-step1_plot_desc(data = antigenicity, .time = "time", y = "conc", C = "Celsius", validation = "Validate", yname = "Antigenicity")
+step1_plot_desc(data = antigenicity, .time = "time", y = "conc", C = "Celsius",
+                validation = "Validate", yname = "Antigenicity")
 
 ## -----------------------------------------------------------------------------
 args(step1_down)
 
 ## -----------------------------------------------------------------------------
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", validation = "Validate")
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 validation = "Validate")
 summary(res$fit)
 confint(res$fit)
 
 ## -----------------------------------------------------------------------------
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", validation = "Validate", parms = list(k1 = 50, k2 = 10000, k3 = 3, c0 = 100))
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 validation = "Validate", parms = list(k1 = 50, k2 = 10000,
+                                                       k3 = 3, c0 = 100))
 summary(res$fit)
 confint(res$fit)
 
@@ -43,40 +47,52 @@ head(res$prediction[,1:5])
 step1_plot_pred(res, yname = "Antigenicity")
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", validation = "Validate", parms = list(k1 = 50, k2 = 10000, k3 = 3, c0 = 100), max_time_pred = 3)
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 validation = "Validate",
+                 parms = list(k1 = 50, k2 = 10000, k3 = 3, c0 = 100),
+                 max_time_pred = 3)
 graph = step1_plot_pred(res, yname = "Antigenicity")
 graph = graph + geom_hline(aes(yintercept = 65), linetype = "dotted")
 graph
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", validation = "Validate", parms = list(k1 = 50, k2 = 10000, k3 = 3, c0 = 100), max_time_pred = 3, temp_pred_C = 2)
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 validation = "Validate",
+                 parms = list(k1 = 50, k2 = 10000, k3 = 3, c0 = 100),
+                 max_time_pred = 3, temp_pred_C = 2)
 step1_plot_pred(res, yname = "Antigenicity")
 
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
 subdat = antigenicity[!(antigenicity$Celsius == "5" & antigenicity$time != 0),]
-res = step1_down(data = subdat, y = "conc", .time = "time", C = "Celsius", max_time_pred = 3, temp_pred_C = 5)
+res = step1_down(data = subdat, y = "conc", .time = "time", C = "Celsius",
+                 max_time_pred = 3, temp_pred_C = 5)
 step1_plot_pred(res, yname = "Antigenicity")
 
 
 ## -----------------------------------------------------------------------------
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", max_time_pred = 3, validation = "Validate")
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 max_time_pred = 3, validation = "Validate")
 head(res$prediction[,-c(3,6:8)])
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", max_time_pred = 3, validation = "Validate")
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 max_time_pred = 3, validation = "Validate")
 step1_plot_CI(res, yname = "Antigenicity")
 step1_plot_PI(res, yname = "Antigenicity", ribbon = TRUE)
 step1_plot_T(res, focus_T = 5, yname = "Antigenicity", ribbon = TRUE)
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
-res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius", max_time_pred = 3, validation = "Validate")
-exc <- excursion(res, temp_changes = c(5,35,6), time_changes = c(6/12,7/12,24/12), yname = "Antigenicity")
+res = step1_down(data = antigenicity, y = "conc", .time = "time", C = "Celsius",
+                 max_time_pred = 3, validation = "Validate")
+exc <- excursion(res, temp_changes = c(5,35,6), time_changes = c(6/12,7/12,24/12),
+                 yname = "Antigenicity")
 tail(exc$predictions[,-c(4)])
 exc$excursion_plot
 
 ## -----------------------------------------------------------------------------
-draws = step1_sample_mvt(data = antigenicity, y = "conc", .time = "time", C = "Celsius", validation = "Validate", draw = 10^4)
+draws = step1_sample_mvt(data = antigenicity, y = "conc", .time = "time",
+                         C = "Celsius", validation = "Validate", draw = 10^4)
 draws = as.data.frame(draws)
 head(draws)
 
@@ -84,24 +100,27 @@ head(draws)
 p1 = draws$c0 - draws$c0 * (1 - ((1 - draws$k3) * (1/(1 - draws$k3) - 1 * exp(draws$k1 - draws$k2 / (5+273.15))))^(1/(1-draws$k3)))
 loss_1y = 1 - p1/draws$c0
 mean(loss_1y)
-quantile(loss_1y, c(0.025, 0.975))
+quantile(loss_1y, c(0.025, 0.975), na.rm = TRUE)
 hist(loss_1y, main = "Lost (%) in 1 year at 5C")
 abline(v = mean(loss_1y), lwd = 2, col = 3)
-abline(v = quantile(loss_1y, c(0.025, 0.975)), lwd = 2, col = 3, lty = 2)
+abline(v = quantile(loss_1y, c(0.025, 0.975), na.rm = TRUE), lwd = 2, col = 3, lty = 2)
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
 data(potency)
 potency$Validate = as.factor(ifelse(potency$Time < 8, 0, 1))
 head(potency)
-step1_plot_desc(data = potency, .time = "Time", y = "Potency", C = "Celsius", validation = "Validate", yname = "Potency")
+step1_plot_desc(data = potency, .time = "Time", y = "Potency", C = "Celsius",
+                validation = "Validate", yname = "Potency")
 
 ## -----------------------------------------------------------------------------
-res = step1_down(data = potency, y = "Potency", .time = "Time", C = "Celsius", validation = "Validate")
+res = step1_down(data = potency, y = "Potency", .time = "Time", C = "Celsius",
+                 validation = "Validate")
 summary(res$fit)
 confint(res$fit)
 
 ## -----------------------------------------------------------------------------
-res = step1_down(data = potency, y = "Potency", .time = "Time", C = "Celsius", validation = "Validate", zero_order = TRUE)
+res = step1_down(data = potency, y = "Potency", .time = "Time", C = "Celsius",
+                 validation = "Validate", zero_order = TRUE)
 summary(res$fit)
 confint(res$fit)
 
@@ -129,15 +148,17 @@ plot = plot + scale_y_continuous(limits = c(5,10))
 plot
 
 ## -----------------------------------------------------------------------------
-draws = step1_sample_mvt(data = potency, y = "Potency", .time = "Time", C = "Celsius", validation = "Validate", draw = 10^4, zero_order = TRUE)
+draws = step1_sample_mvt(data = potency, y = "Potency", .time = "Time",
+                         C = "Celsius", validation = "Validate", draw = 10^4,
+                         zero_order = TRUE)
 draws = as.data.frame(draws)
 head(draws)
 T9 = (1 - 9/draws$c0) / exp(draws$k1 - draws$k2 / (5+273.15))
 
 ## ----fig.width=8, fig.height=6, out.width='75%', dpi=200, fig.align='center'----
 mean(T9)
-quantile(T9, c(0.025, 0.975))
+quantile(T9, c(0.025, 0.975), na.rm = TRUE)
 hist(T9, main = "Time to reach the lower specification at 5C")
 abline(v = mean(T9), lwd = 2, col = 3)
-abline(v = quantile(T9, c(0.025, 0.975)), lwd = 2, col = 3, lty = 2)
+abline(v = quantile(T9, c(0.025, 0.975), na.rm = TRUE), lwd = 2, col = 3, lty = 2)
 

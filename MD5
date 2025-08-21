@@ -1,6 +1,6 @@
-cb5c6a59cb25178ddfceb419fbb4c8ed *DESCRIPTION
+049eb665e1204de46504fbff99a38219 *DESCRIPTION
 bc9fb952a5f6bae83a1f9bf4e3617603 *NAMESPACE
-ac3ed71c6467796b87ef6123a9aab881 *NEWS.md
+dc638cc17411e2b505b91664fd29f304 *NEWS.md
 28d426ec9833aafd6a2e32e4b89d6777 *R/antigenicity.R
 2c81a0b44f03bc42b828cc71c969d7ae *R/excursion.R
 21ab5c44b8cc928ae009e7e490850d1e *R/potency.R
@@ -13,14 +13,14 @@ d7c0d1d854448df41944cd8777c82b3b *R/step1_plot_PI.R
 ca8491b26a13cdae2b6af0ad152d4e82 *R/step1_plot_desc.R
 311349d873f4bb4406550121fedd2bfa *R/step1_plot_diagnostic.R
 882cc617ead52f798b09fca226152432 *R/step1_plot_pred.R
-7ef8c29fa0840af992deff363a56b53b *R/step1_sample_mvt.R
+f631f2e09a42af742811a35d3ecea585 *R/step1_sample_mvt.R
 07fe29f80305ffecebc7f8c428dbbd7c *README.md
-d9defb1e0e1557760d59d0d1e75a1143 *build/vignette.rds
+84bbddbe60c58c2f39a39dc4a4b0279f *build/vignette.rds
 4e09186d651f61cd39095d728dd8445b *data/antigenicity.rda
 b3fc51e4cf38aae21c8f579b4af6b1a8 *data/potency.rda
-0790f43f50fcb323a5e2dff57d036b70 *inst/doc/AccelStab.R
-c8aa854d0335176c4be00c1366d62345 *inst/doc/AccelStab.Rmd
-f8d0bc3bf6563b1f5b8e7b09816caf29 *inst/doc/AccelStab.html
+486e66b859ff7a83d70925ec52bfe813 *inst/doc/AccelStab.R
+3a8e6dc60cb46bbd35b281def0e29036 *inst/doc/AccelStab.Rmd
+78444bf398c6c8d11bc6c6f82a3673e6 *inst/doc/AccelStab.html
 1059e11310e31de8c9265ccd812eaf8b *man/antigenicity.Rd
 ac3f43c4225f6953142467d1b00455be *man/excursion.Rd
 ec4ea48297bcd723c823e053e4b6895d *man/figures/AccelStab.png
@@ -43,4 +43,4 @@ cb8fafc54358b34688cf2aa158fafbeb *man/step1_plot_desc.Rd
 dc5a166acea9c6ff18b0a78326a53b07 *man/step1_plot_diagnostic.Rd
 3394d969a4495b887f5edce557d0d906 *man/step1_plot_pred.Rd
 ffcb3fdc88fc07c5fa3b57bb209e5b66 *man/step1_sample_mvt.Rd
-c8aa854d0335176c4be00c1366d62345 *vignettes/AccelStab.Rmd
+3a8e6dc60cb46bbd35b281def0e29036 *vignettes/AccelStab.Rmd
